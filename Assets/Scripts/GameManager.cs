@@ -39,9 +39,13 @@ public class GameManager : MonoBehaviour
     [Header("Coroutine stuff")]
     private Coroutine slideCoroutine;
 
+    [Header("Final Judgement")]
+    public List<int> finalCombo;
+
     private void Awake()
     {
         instance = this;
+        finalCombo = new List<int>();
     }
 
     /// <summary>
@@ -79,6 +83,7 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
+        finalCombo.Add(choice);
         ChoiceIndex++;
     }
 
