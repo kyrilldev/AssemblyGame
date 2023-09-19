@@ -262,6 +262,11 @@ MonoBehaviour:
   choice1: []
   choice2: []
   choice3: []
+  slideInPos1: {x: 0, y: 0}
+  slideInPos2: {x: 0, y: 0}
+  slideOutPos1: {x: 0, y: 0}
+  slideOutPos2: {x: 0, y: 0}
+  slideIntime: 0
   spawnLocation: {x: 0, y: 0}
   ChoiceIndex: 0
 --- !u!4 &406738730
