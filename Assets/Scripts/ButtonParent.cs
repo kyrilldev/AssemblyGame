@@ -4,13 +4,6 @@ using UnityEngine;
 
 public class ButtonParent : MonoBehaviour
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="beginPos"></param>
-    /// <param name="Gotoposition"></param>
-    /// <param name="waitTime"></param>
-    /// <returns></returns>
     public IEnumerator PosLerp(Vector2 beginPos, Vector2 Gotoposition, float waitTime, float disableDelay, bool canDisable = false)
     {
         GameManager.instance.DisableButtonCollision(gameObject);
