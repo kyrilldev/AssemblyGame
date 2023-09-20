@@ -6,51 +6,40 @@ using UnityEngine.UI;
 public class FadeScript : MonoBehaviour
 {
     public float fadeDuration = 1.0f; // Duration of the fade effect in seconds
-    private CanvasGroup canvasGroup;
+    [HideInInspector] public CanvasGroup mainCanvasGroup;
+    public CanvasGroup introCanvasGroup1;
+    public CanvasGroup introCanvasGroup2;
 
     private void Start()
     {
-        canvasGroup = GetComponent<CanvasGroup>();
+        mainCanvasGroup = GetComponent<CanvasGroup>();
     }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.V)) 
-        { 
-            StartCoroutine(FadeIn());
-        }
-
-        if (Input.GetKeyDown(KeyCode.B)) 
-        {
-            StartCoroutine(FadeOut());
-        }
-    }
-    private IEnumerator FadeIn()
+    public IEnumerator FadeIn(CanvasGroup group)
     {
         float elapsedTime = 0f;
         while (elapsedTime < fadeDuration)
         {
             elapsedTime += Time.deltaTime;
             float alpha = Mathf.Lerp(1f, 0f, elapsedTime / fadeDuration);
-            canvasGroup.alpha = alpha;
+            group.alpha = alpha;
             yield return null;
         }
 
-        canvasGroup.interactable = false; // Disable interaction while faded out
-        canvasGroup.blocksRaycasts = false; // Disable raycasts while faded out
+        group.interactable = false; // Disable interaction while faded out
+        group.blocksRaycasts = false; // Disable raycasts while faded out
     }
 
-    private IEnumerator FadeOut()
+    public IEnumerator FadeOut(CanvasGroup group)
     {
-        canvasGroup.interactable = true; // Enable interaction while fading in
-        canvasGroup.blocksRaycasts = true; // Enable raycasts while fading in
+        group.interactable = true; // Enable interaction while fading in
+        group.blocksRaycasts = true; // Enable raycasts while fading in
 
         float elapsedTime = 0f;
         while (elapsedTime < fadeDuration)
         {
             elapsedTime += Time.deltaTime;
             float alpha = Mathf.Lerp(0f, 1f, elapsedTime / fadeDuration);
-            canvasGroup.alpha = alpha;
+            group.alpha = alpha;
             yield return null;
         }
     }
