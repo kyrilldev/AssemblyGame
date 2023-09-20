@@ -4,6 +4,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -39,9 +40,9 @@ public class GameManager : MonoBehaviour
     public List<int> finalCombo;
     public float minusSize;
 
-    [SerializeField] private TextMeshProUGUI FirstText;
-    [SerializeField] private TextMeshProUGUI SecondText;
-    [SerializeField] private TextMeshProUGUI ThirdText;
+    [SerializeField] private GameObject FirstText;
+    [SerializeField] private GameObject SecondText;
+    [SerializeField] private GameObject ThirdText;
 
     [Header("BlackBars")]
     [SerializeField] private Image AboveBar;
@@ -49,6 +50,8 @@ public class GameManager : MonoBehaviour
 
     public float showTime;
     public Vector2[] endPos;
+
+    public Coroutine taken;
 
     private void Awake()
     {
@@ -59,6 +62,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         DisableAtStart();
+        DisableAllText();
         StartCoroutine(SlideIn(slideIntime, 0, 0, "lerping"));
     }
 
@@ -94,27 +98,20 @@ public class GameManager : MonoBehaviour
         if (EventSystem.current.currentSelectedGameObject != null)
             choice = EventSystem.current.currentSelectedGameObject.GetComponent<Choice>().choice;
 
-        if (ChoiceIndex >= 4)
+        switch (choice)
         {
-            //endgame
-            StartCoroutine(ShowReflection());
-        }
-        else { 
-            switch (choice)
-            {
-                case 1:
-                    //SpawnElement(choice1[choice]);
-                    Debug.Log("spawn choice one");
-                    break;
-                case 2:
-                    //SpawnElement(choice2[choice]);
-                    Debug.Log("spawn choice two");
-                    break;
-                case 3:
-                    //SpawnElement(choice3[choice]);
-                    Debug.Log("spawn choice three");
-                    break;
-            }
+            case 1:
+                //SpawnElement(choice1[choice]);
+                Debug.Log("spawn choice one");
+                break;
+            case 2:
+                //SpawnElement(choice2[choice]);
+                Debug.Log("spawn choice two");
+                break;
+            case 3:
+                //SpawnElement(choice3[choice]);
+                Debug.Log("spawn choice three");
+                break;
         }
 
         finalCombo.Add(choice);
@@ -124,6 +121,13 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         CheckIndex();
+
+        if (ChoiceIndex == 5)
+        {
+            //endgame
+            StartCoroutine(ShowReflection());
+            ChoiceIndex++;
+        }
     }
 
     /// <summary>
@@ -282,6 +286,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(BelowBar.GetComponent<BlackBar>().ShowBlackBars(showTime, endPos[1]));
 
         //play endmusic
+        MusicManager.instance.PlayEndMusic();
 
         //zoom in slightly
         Camera.main.orthographicSize -= minusSize;
@@ -289,13 +294,29 @@ public class GameManager : MonoBehaviour
         //fade background to black
 
         //show end text
-        StartCoroutine(ShowText());
+        taken = StartCoroutine(ShowText());
 
         yield return null;
     }
 
     private IEnumerator ShowText()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(4.17f);
+        FirstText.SetActive(true);
+        yield return new WaitForSeconds(5.09f);
+        SecondText.SetActive(true);
+        yield return new WaitForSeconds(6.17f);
+        ThirdText.SetActive(true);
+        yield return new WaitForSeconds(7f);
+
+        //Send back to Start Menu
+        SceneManager.LoadScene(0);
+    }
+
+    private void DisableAllText()
+    {
+        FirstText.SetActive(false);
+        SecondText.SetActive(false);
+        ThirdText.SetActive(false);
     }
 }

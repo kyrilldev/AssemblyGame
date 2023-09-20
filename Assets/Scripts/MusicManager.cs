@@ -6,6 +6,7 @@ public class MusicManager : MonoBehaviour
 {
     public static MusicManager instance;
     public Animator anim;
+    public GameObject Child;
 
     private void Awake()
     {
@@ -24,6 +25,7 @@ public class MusicManager : MonoBehaviour
     {
         anim.enabled = true;
         anim.Play("FadeOutMusic");
+        GetComponent<AudioSource>().enabled = false;
     }
 
     /// <summary>
@@ -33,5 +35,12 @@ public class MusicManager : MonoBehaviour
     {
         anim.enabled = true;
         anim.Play("FadeInMusic");
+    }
+
+    public void PlayEndMusic()
+    {
+        FadeOutMusic();
+        Child.SetActive(true);
+        Child.GetComponent<Animator>().Play("FadeInMusicLonger");
     }
 }
