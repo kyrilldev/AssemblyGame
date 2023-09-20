@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Final Judgement")]
     public List<int> finalCombo;
-    public float zoomInAmount;
+    public float minusSize;
 
     [SerializeField] private TextMeshProUGUI FirstText;
     [SerializeField] private TextMeshProUGUI SecondText;
@@ -284,7 +284,7 @@ public class GameManager : MonoBehaviour
         //play endmusic
 
         //zoom in slightly
-        Camera.main.fieldOfView -= zoomInAmount;
+        Camera.main.orthographicSize -= minusSize;
 
         //fade background to black
 
