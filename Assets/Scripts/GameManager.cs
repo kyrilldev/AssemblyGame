@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -48,7 +49,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         DisableAtStart();
-        StartCoroutine(Slide(slidePositions[0], slidePositions[1], slideIntime, 0, 1, "lerping"));
+        StartCoroutine(SlideIn(slideIntime, 0, 0, "lerping"));
     }
 
     /// <summary>
@@ -79,7 +80,9 @@ public class GameManager : MonoBehaviour
     public void Choose()
     {
         //gets the component on the clicked button
-        int choice = EventSystem.current.currentSelectedGameObject.GetComponent<Choice>().choice;
+        int choice = 0;
+        if (EventSystem.current.currentSelectedGameObject != null)
+            choice = EventSystem.current.currentSelectedGameObject.GetComponent<Choice>().choice;
 
         if (ChoiceIndex >= 4)
         {
@@ -126,24 +129,24 @@ public class GameManager : MonoBehaviour
             {
                 case 1:
                     //1 moet naar buiten
-                    StartCoroutine(Slide(slidePositions[1], slidePositions[2], slideIntime, 0, ChoiceIndex));
+                    StartCoroutine(SlideOut(slideIntime, 0, 1));
                     //2 moet naar binnen
-                    StartCoroutine(Slide(slidePositions[0], slidePositions[1], slideIntime, 0.1f, ChoiceIndex + 1));
+                    StartCoroutine(SlideIn(slideIntime, 1, 2));
                     break;
                 case 2:
-                    StartCoroutine(Slide(slidePositions[1], slidePositions[2], slideIntime, 0, ChoiceIndex));
-                    StartCoroutine(Slide(slidePositions[0], slidePositions[1], slideIntime, 0.1f, ChoiceIndex + 1));
+                    StartCoroutine(SlideOut(slideIntime, 0, 2));
+                    StartCoroutine(SlideIn(slideIntime, 1, 3));
                     break;
                 case 3:
-                    StartCoroutine(Slide(slidePositions[1], slidePositions[2], slideIntime, 0, ChoiceIndex));
-                    StartCoroutine(Slide(slidePositions[0], slidePositions[1], slideIntime, 0.1f, ChoiceIndex + 1));
+                    StartCoroutine(SlideOut(slideIntime, 0, 3));
+                    StartCoroutine(SlideIn(slideIntime, 1, 4));
                     break;
                 case 4:
-                    StartCoroutine(Slide(slidePositions[1], slidePositions[2], slideIntime, 0, ChoiceIndex));
-                    StartCoroutine(Slide(slidePositions[0], slidePositions[1], slideIntime, 0.1f, ChoiceIndex + 1));
+                    StartCoroutine(SlideOut(slideIntime, 0, 4));
+                    StartCoroutine(SlideIn(slideIntime, 1, 5));
                     break;
                 case 5:
-                    StartCoroutine(Slide(slidePositions[1], slidePositions[2], slideIntime, 0.1f, ChoiceIndex + 1));
+                    StartCoroutine(SlideOut(slideIntime, 0, 5));
                     break;
             }
 
@@ -158,11 +161,72 @@ public class GameManager : MonoBehaviour
         hasInteracted = true;
     }
 
+    public void DisableButtonCollision(GameObject group)
+    {
+        List<Button> buttons = group.GetComponentsInChildren<Button>().ToList();
+        for (int i = 0; i < buttons.Count; i++)
+        {
+            buttons[i].interactable = false;
+        }
+    }
+
+    public void EnableButtonCollision(GameObject group)
+    {
+        List<Button> buttons = group.GetComponentsInChildren<Button>().ToList();
+        for (int i = 0; i < buttons.Count; i++)
+        {
+            buttons[i].interactable = true;
+        }
+    }
+
     /// <summary>
     /// Slides the first options out of the screen and slide the other ones in
     /// </summary>
     /// <returns></returns>
-    private IEnumerator Slide(Vector2 beginPos, Vector2 endPos, float time, float delay, int choiceIndex, string debug = null)
+    private IEnumerator SlideIn(float time, float delay, int choiceIndex, string debug = null)
+    {
+        if (debug != null)
+        {
+            Debug.Log(debug);
+        }
+        //do the actual sliding
+        switch (choiceIndex)
+        {
+            case 1:
+                buttonsParent1.SetActive(true);
+                StartCoroutine(buttonsParent1.GetComponent<ButtonParent>().PosLerp(slidePositions[0], slidePositions[1], time, 0));
+                //yield return new WaitForSeconds(1.5f);
+                break;
+            case 2:
+                buttonsParent2.SetActive(true);
+                StartCoroutine(buttonsParent2.GetComponent<ButtonParent>().PosLerp(slidePositions[0], slidePositions[1], time, 0));
+                //yield return new WaitForSeconds(1.5f);
+                break;
+            case 3:
+                buttonsParent3.SetActive(true);
+                StartCoroutine(buttonsParent3.GetComponent<ButtonParent>().PosLerp(slidePositions[0], slidePositions[1], time, 0));
+                //yield return new WaitForSeconds(1.5f);
+                break;
+            case 4:
+                buttonsParent4.SetActive(true);
+                StartCoroutine(buttonsParent4.GetComponent<ButtonParent>().PosLerp(slidePositions[0], slidePositions[1], time, 0));
+                //yield return new WaitForSeconds(1.5f);
+                break;
+            case 5:
+                buttonsParent5.SetActive(true); 
+                StartCoroutine(buttonsParent5.GetComponent<ButtonParent>().PosLerp(slidePositions[0], slidePositions[1], time, 0));
+                //yield return new WaitForSeconds(1.5f);
+                break;
+        }
+        //CURRENTSELECTEDGAMEOBJECT IS NULL
+        yield return null;
+    }
+
+    /// <summary>
+    /// Slides the first options out of the screen and slide the other ones in
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator SlideOut(float time, float delay, int choiceIndex, string debug = null)
     {
         if (debug != null)
         {
@@ -174,36 +238,26 @@ public class GameManager : MonoBehaviour
         switch (choiceIndex)
         {
             case 1:
-                buttonsParent1.SetActive(true);
-                StartCoroutine(buttonsParent1.GetComponentInParent<ButtonParent>().PosLerp(beginPos, endPos, time));
+                StartCoroutine(buttonsParent1.GetComponentInParent<ButtonParent>().PosLerp(slidePositions[1], slidePositions[2], time, 0, true));
                 //yield return new WaitForSeconds(1.5f);
                 break;
             case 2:
-                buttonsParent2.SetActive(true);
-                StartCoroutine(buttonsParent2.GetComponentInParent<ButtonParent>().PosLerp(beginPos, endPos, time));
+                StartCoroutine(buttonsParent2.GetComponentInParent<ButtonParent>().PosLerp(slidePositions[1], slidePositions[2], time, 0.1f, true));
                 //yield return new WaitForSeconds(1.5f);
-                buttonsParent1.SetActive(false);
                 break;
             case 3:
-                buttonsParent3.SetActive(true);
-                StartCoroutine(buttonsParent3.GetComponentInParent<ButtonParent>().PosLerp(beginPos, endPos, time));
+                StartCoroutine(buttonsParent3.GetComponentInParent<ButtonParent>().PosLerp(slidePositions[1], slidePositions[2], time, 0.1f, true));
                 //yield return new WaitForSeconds(1.5f);
-                buttonsParent2.SetActive(false);
                 break;
             case 4:
-                buttonsParent4.SetActive(true);
-                StartCoroutine(buttonsParent4.GetComponentInParent<ButtonParent>().PosLerp(beginPos, endPos, time));
+                StartCoroutine(buttonsParent4.GetComponentInParent<ButtonParent>().PosLerp(slidePositions[1], slidePositions[2], time, 0.1f, true));
                 //yield return new WaitForSeconds(1.5f);
-                buttonsParent3.SetActive(false);
                 break;
             case 5:
-                buttonsParent5.SetActive(true);
-                StartCoroutine(buttonsParent5.GetComponentInParent<ButtonParent>().PosLerp(beginPos, endPos, time));
+                StartCoroutine(buttonsParent5.GetComponentInParent<ButtonParent>().PosLerp(slidePositions[1], slidePositions[2], time, 0.1f, true));
                 //yield return new WaitForSeconds(1.5f);
-                buttonsParent4.SetActive(false);
                 break;
         }
-        //CURRENTSELECTEDGAMEOBJECT IS NULL
     }
 
     private IEnumerator ShowReflection()

@@ -5,14 +5,15 @@ using UnityEngine;
 public class ButtonParent : MonoBehaviour
 {
     /// <summary>
-    /// THIS FUNCTION NEEDS TO BE MOVED TO THE BUTTONS PARENT GAMEOBJECT
+    /// 
     /// </summary>
     /// <param name="beginPos"></param>
     /// <param name="Gotoposition"></param>
     /// <param name="waitTime"></param>
     /// <returns></returns>
-    public IEnumerator PosLerp(Vector2 beginPos, Vector2 Gotoposition, float waitTime)
+    public IEnumerator PosLerp(Vector2 beginPos, Vector2 Gotoposition, float waitTime, float disableDelay, bool canDisable = false)
     {
+        GameManager.instance.DisableButtonCollision(gameObject);
         float elapsedTime = 0;
         Vector2 currentPos;
 
@@ -27,9 +28,15 @@ public class ButtonParent : MonoBehaviour
             // Yield here
             yield return null;
         }
+        if (canDisable == true)
+        {
+            Debug.Log("disabling gameobject");
+            gameObject.SetActive(false);
+        }
 
         // Make sure we got there
         transform.position = Gotoposition;
+        GameManager.instance.EnableButtonCollision(gameObject);
         yield return null;
 
     }
