@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -34,11 +35,20 @@ public class GameManager : MonoBehaviour
     public int ChoiceIndex = 0;
     private bool hasInteracted;
 
-    [Header("Coroutine stuff")]
-    private Coroutine slideCoroutine;
-
     [Header("Final Judgement")]
     public List<int> finalCombo;
+    public float zoomInAmount;
+
+    [SerializeField] private TextMeshProUGUI FirstText;
+    [SerializeField] private TextMeshProUGUI SecondText;
+    [SerializeField] private TextMeshProUGUI ThirdText;
+
+    [Header("BlackBars")]
+    [SerializeField] private Image AboveBar;
+    [SerializeField] private Image BelowBar;
+
+    public float showTime;
+    public Vector2[] endPos;
 
     private void Awake()
     {
@@ -265,14 +275,27 @@ public class GameManager : MonoBehaviour
         //play end cutscene
         Debug.Log("ending the game");
 
-        //hide UI
+        //hide UI AKA disable the menus and stuff till after the showcase
 
         //get the blackbars
+        StartCoroutine(AboveBar.GetComponent<BlackBar>().ShowBlackBars(showTime, endPos[0]));
+        StartCoroutine(BelowBar.GetComponent<BlackBar>().ShowBlackBars(showTime, endPos[1]));
 
         //play endmusic
 
+        //zoom in slightly
+        Camera.main.fieldOfView -= zoomInAmount;
+
+        //fade background to black
+
         //show end text
+        StartCoroutine(ShowText());
 
         yield return null;
+    }
+
+    private IEnumerator ShowText()
+    {
+        yield return new WaitForSeconds(1);
     }
 }

@@ -1,16 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class ButtonParent : MonoBehaviour
+public class BlackBar : MonoBehaviour
 {
-    public IEnumerator PosLerp(Vector2 beginPos, Vector2 Gotoposition, float waitTime, float disableDelay, bool canDisable = false)
+    public IEnumerator ShowBlackBars(float waitTime, Vector2 Gotoposition)
     {
-        GameManager.instance.DisableButtonCollision(gameObject);
         float elapsedTime = 0;
         Vector2 currentPos;
-
-        transform.position = beginPos;
 
         while (elapsedTime < waitTime)
         {
@@ -18,19 +16,11 @@ public class ButtonParent : MonoBehaviour
             transform.position = Vector2.Lerp(currentPos, Gotoposition, (elapsedTime / waitTime));
             elapsedTime += Time.deltaTime;
 
-            // Yield here
             yield return null;
-        }
-        if (canDisable == true)
-        {
-            Debug.Log("disabling gameobject");
-            gameObject.SetActive(false);
         }
 
         // Make sure we got there
         transform.position = Gotoposition;
-        GameManager.instance.EnableButtonCollision(gameObject);
         yield return null;
-
     }
 }
