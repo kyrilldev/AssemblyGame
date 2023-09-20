@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class FadeScript : MonoBehaviour
 {
+    public static FadeScript instance;
+
     public float fadeDuration = 1.0f; // Duration of the fade effect in seconds
     [HideInInspector] public CanvasGroup mainCanvasGroup;
     public CanvasGroup introCanvasGroup1;
@@ -13,6 +15,14 @@ public class FadeScript : MonoBehaviour
     private void Start()
     {
         mainCanvasGroup = GetComponent<CanvasGroup>();
+    }
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
     }
     public IEnumerator FadeIn(CanvasGroup group)
     {
