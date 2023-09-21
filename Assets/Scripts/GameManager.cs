@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
     public float slideIntime;
 
     [Header("Misc")]
-    public Vector2 spawnLocation;
+    public Vector2[] spawnLocation;
     public int ChoiceIndex = 0;
     private bool hasInteracted;
 
@@ -44,6 +44,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject SecondText;
     [SerializeField] private GameObject ThirdText;
 
+    [SerializeField] private GameObject panel;
+
     [Header("BlackBars")]
     [SerializeField] private Image AboveBar;
     [SerializeField] private Image BelowBar;
@@ -53,6 +55,7 @@ public class GameManager : MonoBehaviour
 
     public Coroutine taken;
     public CanvasGroup group1;
+    public GameObject SpawnObject;
 
     private void Awake()
     {
@@ -72,11 +75,14 @@ public class GameManager : MonoBehaviour
     /// Spawns the given Gameobject in the place 
     /// </summary>
     /// <param name="prefab"></param>
-    private void SpawnElement(GameObject prefab)
+    private void SpawnElement(GameObject prefab, int index)
     {
-        //deploy anim should be included
-        Debug.Log("Spawned: " + prefab.name);
-        Instantiate(prefab, spawnLocation, Quaternion.identity);
+        if (prefab != null)
+        {
+            //deploy anim should be included
+            Debug.Log("Spawned: " + prefab.name);
+            Instantiate(prefab, spawnLocation[index], Quaternion.identity, SpawnObject.transform);
+        }
     }
 
     /// <summary>
@@ -100,19 +106,22 @@ public class GameManager : MonoBehaviour
         if (EventSystem.current.currentSelectedGameObject != null)
             choice = EventSystem.current.currentSelectedGameObject.GetComponent<Choice>().choice;
 
-        switch (choice)
+        switch (ChoiceIndex)
         {
+            case 0:
+                SpawnElement(choice1[choice], 0);
+                break;
             case 1:
-                //SpawnElement(choice1[choice]);
-                Debug.Log("spawn choice one");
+                SpawnElement(choice2[choice], 1);
                 break;
             case 2:
-                //SpawnElement(choice2[choice]);
-                Debug.Log("spawn choice two");
+                SpawnElement(choice3[choice], 2);
                 break;
             case 3:
-                //SpawnElement(choice3[choice]);
-                Debug.Log("spawn choice three");
+                SpawnElement(choice4[choice], 3);
+                break;
+            case 4:
+                SpawnElement(choice5[choice], 4);
                 break;
         }
 
@@ -286,6 +295,9 @@ public class GameManager : MonoBehaviour
         //get the blackbars
         StartCoroutine(AboveBar.GetComponent<BlackBar>().ShowBlackBars(showTime, endPos[0]));
         StartCoroutine(BelowBar.GetComponent<BlackBar>().ShowBlackBars(showTime, endPos[1]));
+
+        //activate panel
+        panel.SetActive(true);
 
         //play endmusic
         MusicManager.instance.PlayEndMusic();
