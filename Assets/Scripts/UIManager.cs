@@ -58,4 +58,9 @@ public class UIManager : MonoBehaviour
         yield return null;
 
     }
+
+    public IEnumerator PopUpAnim()
+    {
+        yield return null;
+    }
 }
