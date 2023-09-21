@@ -25,14 +25,6 @@ public class UIManager : MonoBehaviour
         popupPlaceholder = popups[index];
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            PopupAnimation(0);
-        }
-    }
-
     private void PopupAnimation(int index)
     {
         popupPlaceholder = popups[index];
@@ -41,7 +33,7 @@ public class UIManager : MonoBehaviour
         else
             popupPos--;
 
-        StartCoroutine(PosLerp(popupPlaceholder, popupPlaceholder.transform.position, popupPositions[popupPos].position, 1f));
+        StartCoroutine(PosLerp(popupPlaceholder, popupPlaceholder.transform.position, popupPositions[popupPos].position, 1f));  
     }
 
     public IEnumerator PosLerp(GameObject obj, Vector2 beginPos, Vector2 Gotoposition, float waitTime)
