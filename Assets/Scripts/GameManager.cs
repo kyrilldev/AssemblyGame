@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -34,11 +36,22 @@ public class GameManager : MonoBehaviour
     public int ChoiceIndex = 0;
     private bool hasInteracted;
 
-    [Header("Coroutine stuff")]
-    private Coroutine slideCoroutine;
-
     [Header("Final Judgement")]
     public List<int> finalCombo;
+    public float minusSize;
+
+    [SerializeField] private GameObject FirstText;
+    [SerializeField] private GameObject SecondText;
+    [SerializeField] private GameObject ThirdText;
+
+    [Header("BlackBars")]
+    [SerializeField] private Image AboveBar;
+    [SerializeField] private Image BelowBar;
+
+    public float showTime;
+    public Vector2[] endPos;
+
+    public Coroutine taken;
 
     private void Awake()
     {
@@ -49,6 +62,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         DisableAtStart();
+        DisableAllText();
         StartCoroutine(SlideIn(slideIntime, 0, 0, "lerping"));
     }
 
@@ -84,27 +98,20 @@ public class GameManager : MonoBehaviour
         if (EventSystem.current.currentSelectedGameObject != null)
             choice = EventSystem.current.currentSelectedGameObject.GetComponent<Choice>().choice;
 
-        if (ChoiceIndex >= 4)
+        switch (choice)
         {
-            //endgame
-            StartCoroutine(ShowReflection());
-        }
-        else { 
-            switch (choice)
-            {
-                case 1:
-                    //SpawnElement(choice1[choice]);
-                    Debug.Log("spawn choice one");
-                    break;
-                case 2:
-                    //SpawnElement(choice2[choice]);
-                    Debug.Log("spawn choice two");
-                    break;
-                case 3:
-                    //SpawnElement(choice3[choice]);
-                    Debug.Log("spawn choice three");
-                    break;
-            }
+            case 1:
+                //SpawnElement(choice1[choice]);
+                Debug.Log("spawn choice one");
+                break;
+            case 2:
+                //SpawnElement(choice2[choice]);
+                Debug.Log("spawn choice two");
+                break;
+            case 3:
+                //SpawnElement(choice3[choice]);
+                Debug.Log("spawn choice three");
+                break;
         }
 
         finalCombo.Add(choice);
@@ -114,6 +121,13 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         CheckIndex();
+
+        if (ChoiceIndex == 5)
+        {
+            //endgame
+            StartCoroutine(ShowReflection());
+            ChoiceIndex++;
+        }
     }
 
     /// <summary>
@@ -265,14 +279,44 @@ public class GameManager : MonoBehaviour
         //play end cutscene
         Debug.Log("ending the game");
 
-        //hide UI
+        //hide UI AKA disable the menus and stuff till after the showcase
 
         //get the blackbars
+        StartCoroutine(AboveBar.GetComponent<BlackBar>().ShowBlackBars(showTime, endPos[0]));
+        StartCoroutine(BelowBar.GetComponent<BlackBar>().ShowBlackBars(showTime, endPos[1]));
 
         //play endmusic
+        MusicManager.instance.PlayEndMusic();
+
+        //zoom in slightly
+        Camera.main.orthographicSize -= minusSize;
+
+        //fade background to black
 
         //show end text
+        taken = StartCoroutine(ShowText());
 
         yield return null;
+    }
+
+    private IEnumerator ShowText()
+    {
+        yield return new WaitForSeconds(4.17f);
+        FirstText.SetActive(true);
+        yield return new WaitForSeconds(5.09f);
+        SecondText.SetActive(true);
+        yield return new WaitForSeconds(6.17f);
+        ThirdText.SetActive(true);
+        yield return new WaitForSeconds(7f);
+
+        //Send back to Start Menu
+        SceneManager.LoadScene(0);
+    }
+
+    private void DisableAllText()
+    {
+        FirstText.SetActive(false);
+        SecondText.SetActive(false);
+        ThirdText.SetActive(false);
     }
 }
