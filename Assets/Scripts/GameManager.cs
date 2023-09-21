@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour
     public Vector2[] endPos;
 
     public Coroutine taken;
+    public CanvasGroup group1;
 
     private void Awake()
     {
@@ -61,6 +62,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        StartCoroutine(FadeScript.instance.FadeOut(group1));
         DisableAtStart();
         DisableAllText();
         StartCoroutine(SlideIn(slideIntime, 0, 0, "lerping"));

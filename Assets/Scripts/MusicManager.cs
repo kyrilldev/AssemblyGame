@@ -25,7 +25,6 @@ public class MusicManager : MonoBehaviour
     {
         anim.enabled = true;
         anim.Play("FadeOutMusic");
-        GetComponent<AudioSource>().enabled = false;
     }
 
     /// <summary>

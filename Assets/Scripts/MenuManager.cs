@@ -7,6 +7,7 @@ public class MenuManager : MonoBehaviour
 {
     public void StartGame()
     {
+        MusicManager.instance.FadeInMusic();
         StartCoroutine(StartGameCoroutine());
     }
     private IEnumerator StartGameCoroutine()
@@ -20,8 +21,10 @@ public class MenuManager : MonoBehaviour
         StartCoroutine(FadeScript.instance.FadeOut(FadeScript.instance.introCanvasGroup2));
         yield return new WaitForSeconds(2f);
         StartCoroutine(FadeScript.instance.FadeIn(FadeScript.instance.introCanvasGroup2));
+        MusicManager.instance.FadeOutMusic();
         yield return new WaitForSeconds(1f);
         StartCoroutine(FadeScript.instance.FadeOut(FadeScript.instance.mainCanvasGroup));
+        LoadScene(1);
         yield return null;
     }
 
